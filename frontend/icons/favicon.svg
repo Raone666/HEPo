@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="pocketGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#f59e0b" stop-opacity="0.4"/>
+      <stop offset="85%" stop-color="#ef4444" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mercuryGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="22" fill="#0f172a"/>
+  <!-- Heat pocket contours -->
+  <circle cx="50" cy="50" r="42" fill="url(#pocketGlow)"/>
+  <circle cx="50" cy="50" r="34" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+  <circle cx="50" cy="50" r="22" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.8"/>
+  <!-- Thermometer body -->
+  <rect x="46" y="24" width="8" height="34" rx="4" fill="#f8fafc"/>
+  <circle cx="50" cy="62" r="10" fill="#f8fafc"/>
+  <!-- Mercury column -->
+  <rect x="48" y="32" width="4" height="26" rx="2" fill="url(#mercuryGrad)"/>
+  <circle cx="50" cy="62" r="7" fill="url(#mercuryGrad)"/>
+</svg>

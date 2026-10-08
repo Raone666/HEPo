@@ -1,0 +1,3 @@
+# HEPo Backend Dependencies
+# The heat-pocket detection engine relies strictly on Python standard libraries
+# (math, datetime, statistics, typing, json) to minimize AWS Lambda cold-start latency.

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>HEPo — Urban Heat Pocket Monitor</title>
+  
+  <!-- PWA Metadata -->
+  <meta name="description" content="HEPo (Heat Encroachment Pockets) detects and visualizes localized urban heat pockets from distributed geotagged temperature observations.">
+  <meta name="theme-color" content="#0d1524">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HEPo">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <!-- Local Leaflet 1.9.4 CSS -->
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <!-- Application CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Clean, Streamlined Header -->
+    <header class="app-header">
+      <div class="brand">
+        <img src="icons/favicon.svg" alt="HEPo Logo" class="brand-logo" width="28" height="28">
+        <div class="brand-text">
+          <h1 class="brand-title">HEPo <span class="pronounce">(hippo)</span></h1>
+          <span class="brand-sub">Urban Heat Pocket Monitor &bull; Delhi NCR</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button id="mode-toggle-btn" class="badge badge-sim" title="Click to toggle Simulation / Live Standby" aria-label="Toggle Simulation / Live Mode">
+          <span class="status-dot"></span> <span id="mode-label">SIMULATION MODE</span>
+        </button>
+        <span id="network-badge" class="badge badge-online">
+          <span class="status-dot"></span> <span id="network-label">ONLINE</span>
+        </span>
+        <button id="install-btn" class="btn btn-sm btn-outline hidden" aria-label="Install App">Install</button>
+      </div>
+    </header>
+
+    <!-- Compact Metrics Ribbon -->
+    <section class="metrics-bar" aria-label="Microclimate Telemetry Summary">
+      <div class="metric-card">
+        <span class="metric-label">Active Nodes</span>
+        <span class="metric-value" id="stat-active-nodes">--</span>
+      </div>
+      <div class="metric-card metric-pocket">
+        <span class="metric-label">Heat Pockets</span>
+        <span class="metric-value" id="stat-pockets-detected">--</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Average Temperature</span>
+        <span class="metric-value" id="stat-avg-temp">--°C</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Urban Baseline</span>
+        <span class="metric-value" id="stat-baseline-temp">--°C</span>
+      </div>
+    </section>
+
+    <!-- Error State Banner (Hidden by default) -->
+    <div id="error-banner" class="alert-banner error-banner hidden" role="alert">
+      <div class="banner-content">
+        <strong>Telemetry Alert:</strong>
+        <span id="error-message">Sensor observation stream interrupted.</span>
+      </div>
+      <button id="btn-dismiss-error" class="btn btn-sm btn-banner">Dismiss</button>
+    </div>
+
+    <!-- Offline Notification Banner -->
+    <div id="offline-banner" class="offline-banner hidden" role="status">
+      <span>Offline Mode — Serving cached application shell &amp; observations</span>
+    </div>
+
+    <!-- Map Viewport -->
+    <main class="map-wrapper">
+      <div id="map" role="region" aria-label="Interactive Leaflet Map"></div>
+
+      <!-- Loading State Overlay -->
+      <div id="loading-overlay" class="loading-overlay hidden" aria-live="polite">
+        <div class="spinner"></div>
+        <div class="loading-text">Analyzing spatial microclimates...</div>
+      </div>
+
+      <!-- Essential Map Controls (Floating Top-Right) -->
+      <div class="map-controls">
+        <button id="btn-focus-pocket" class="btn btn-control" title="Focus Detected Heat Pocket" aria-label="Focus Detected Heat Pocket">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+          </svg>
+          <span>Focus Pocket</span>
+        </button>
+
+        <button id="btn-fit-bounds" class="btn btn-control" title="Fit All Observations" aria-label="Fit All Observations">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+          <span>Fit All</span>
+        </button>
+
+        <button id="btn-toggle-legend" class="btn btn-control btn-legend-toggle" title="Toggle Legend" aria-label="Toggle Legend">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <span>Legend</span>
+        </button>
+      </div>
+
+      <!-- Clear, Professional Map Legend (Bottom-Left) -->
+      <aside id="map-legend" class="map-legend" aria-label="Thermal Classification Legend">
+        <div class="legend-header">
+          <strong>Thermal Classification</strong>
+          <button id="btn-close-legend" class="btn-legend-close" aria-label="Close Legend">&times;</button>
+        </div>
+        <div class="legend-body">
+          <div class="legend-row">
+            <span class="legend-marker marker-normal"></span>
+            <span class="legend-text">Normal (34.0–35.9°C)</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-marker marker-elevated"></span>
+            <span class="legend-text">Elevated (36.0–38.5°C)</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-marker marker-anomalous"></span>
+            <span class="legend-text">Anomalous (≥ 40.0°C)</span>
+          </div>
+          <div class="legend-divider"></div>
+          <div class="legend-row">
+            <span class="legend-ring-pocket"></span>
+            <span class="legend-text">Heat Pocket (≥ +3°C, N ≥ 3)</span>
+          </div>
+        </div>
+        <div class="legend-meta">Delhi Microclimate &bull; ~200m Cluster</div>
+      </aside>
+    </main>
+
+    <!-- Inspection Drawer / Panel (Bottom sheet on mobile, sidebar card on desktop) -->
+    <div id="detail-drawer" class="detail-drawer hidden" role="dialog" aria-modal="false" aria-labelledby="drawer-title">
+      <div class="drawer-handle" id="drawer-handle"></div>
+      
+      <div class="drawer-header">
+        <div class="drawer-header-left">
+          <span class="drawer-tag" id="drawer-badge">INSPECTION</span>
+          <h2 class="drawer-title" id="drawer-title">Target Details</h2>
+        </div>
+        <button id="btn-close-drawer" class="btn-icon" aria-label="Close details panel">&times;</button>
+      </div>
+
+      <div class="drawer-content" id="drawer-body">
+        <!-- Dynamically populated via app.js -->
+      </div>
+    </div>
+
+    <!-- Scientific Honesty Disclaimer Footer -->
+    <footer class="app-footer">
+      <p class="footer-text">
+        <strong>HEPo Prototype:</strong> Observations are deterministically simulated for hackathon evaluation. Visualizes localized observational thermal anomalies; does not represent certified weather stations.
+      </p>
+    </footer>
+  </div>
+
+  <!-- Local Leaflet 1.9.4 Library -->
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <!-- Core Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>

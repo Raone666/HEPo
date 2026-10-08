@@ -1,0 +1,39 @@
+{
+  "id": "/hepo",
+  "name": "HEPo - Urban Heat Pocket Monitor",
+  "short_name": "HEPo",
+  "description": "Progressive Web App for detecting and visualizing localized urban heat pockets from distributed geotagged temperature observations.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0d1524",
+  "orientation": "portrait-primary",
+  "categories": ["weather", "environment", "utilities"],
+  "icons": [
+    {
+      "src": "icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
