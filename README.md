@@ -1,71 +1,146 @@
 # HEPo — Heat Encroachment Pockets
 
-> **Pronounced:** *"hippo"*  
-> **Event:** Environmental Hacks (Bharat Builds Tour — WeMakeDevs × AWS Builder Center)  
-> **Track:** Heat and Water &bull; Localized Urban Heat Pockets  
+> **Pronounced:** *"hippo"*
 
-HEPo is a Progressive Web App (PWA) that detects and visualizes localized urban heat pockets from distributed geotagged temperature observations.
+**Environmental Hacks — Bharat Builds Tour**  
+**WeMakeDevs × AWS Builder Center**  
+**Track:** Heat and Water • Localized Urban Heat Pockets
 
----
-
-## 🌟 The Problem & Solution
-
-* **The Problem:** A city does not experience heat uniformly. Localized areas (unshaded transit junctions, dense asphalt, industrial container yards) can become significantly hotter than their surroundings (+3°C to +6°C excess), while broad weather measurements fail to reveal these small-scale differences.
-* **The Solution:** HEPo turns distributed temperature observations into a live map of localized urban heat pockets, providing situational awareness for outdoor workers, delivery couriers, pedestrians, and urban planners.
+HEPo is a Progressive Web App (PWA) designed to detect and visualize localized urban heat pockets from distributed, geotagged temperature observations.
 
 ---
 
-## 🚀 Quick Start: Running the PWA Locally
+## 🌡️ The Problem
 
-No heavy node dependencies required. Start with Python's built-in static HTTP server:
+A city does not experience heat uniformly.
 
-```powershell
-# From the repository root
-python -m http.server 8000 --directory frontend
-```
+Two locations only a few hundred meters apart can experience noticeably different thermal conditions because of differences in shade, surface materials, building density, traffic, vegetation, and other local factors.
 
-Then open your browser to:
-[http://localhost:8000](http://localhost:8000)
+Broad weather measurements can describe regional conditions while missing these smaller-scale variations.
 
-### Testing Offline & PWA Capabilities
-1. Open DevTools in Chrome/Edge (`F12`).
-2. Go to the **Application** tab &rarr; **Service Workers** to verify `service-worker.js` is active.
-3. Toggle **Offline** mode in DevTools Network tab and reload the page; the app shell and cached observations will load smoothly with an offline badge.
-4. Click **Install App** in the header to install as a standalone PWA on desktop or mobile.
+**HEPo focuses on the local picture.**
 
 ---
 
-## 🧪 Automated Testing
+## 💡 The Solution
 
-Run the test suite to verify asset integrity, manifest conformance, schema adherence, and detection algorithm math:
+HEPo turns distributed temperature observations into a map of localized thermal anomalies.
 
-```powershell
-python -m unittest tests/test_phase1.py
-```
+The system:
 
-To regenerate the deterministic simulation dataset:
-```powershell
-python simulation/generate_observations.py
-```
+1. Collects temperature observations with geographic coordinates and timestamps.
+2. Groups nearby observations.
+3. Calculates a local temperature baseline.
+4. Identifies clusters that are significantly warmer than their surroundings.
+5. Visualizes detected heat pockets on an interactive map.
+6. Provides contextual information such as temperature difference, observation count, and confidence.
 
----
+### Core idea
 
-## 📱 Phase 1 Deliverables (PWA Only)
-
-* **Responsive Mobile-First PWA Shell**: High-contrast, accessible dark UI optimized for mobile touch targets and desktop inspectors.
-* **Interactive Leaflet Geospatial Map**: Renders observation pins with direct temperature badges and pulse-animated heat pocket circles.
-* **Deterministic Simulation Dataset**: 25 calibrated observations around Delhi Technological University (DTU) and surrounding microclimates.
-* **Heat Pocket Detection Algorithm**:
-  * Spatial grouping within ~200 meters.
-  * Baseline comparison against ambient urban background.
-  * Prototype threshold: $\ge 3$ observations and $\Delta T \ge +3.0^\circ\text{C}$.
-  * Confidence rating (`HIGH`, `MEDIUM`, `LOW`).
-* **Inspection Panels**: Detailed breakdown for selected observations and detected heat pocket zones.
-* **PWA Manifest & Service Worker**: Standalone installability with offline app shell caching.
-* **Scientific Honesty Disclosures**: Explicit simulation mode badges and microclimate anomaly disclaimers.
+> **HEPo turns distributed temperature observations into a live map of localized urban heat pockets.**
 
 ---
 
-## 🏛️ System Architecture
+## 👥 Who Is It For?
 
-See [`docs/architecture.md`](docs/architecture.md) for full architecture specifications, DynamoDB schema, and AWS integration roadmap.
+HEPo is designed to provide situational awareness for:
+
+- Outdoor workers
+- Delivery workers
+- Pedestrians
+- Urban residents
+- Event organizers
+- Environmental teams
+- Urban planners
+- Researchers
+
+A simple user question HEPo aims to answer is:
+
+> **"Is the area around me experiencing unusually high heat compared with nearby areas?"**
+
+---
+
+## 🚀 Current Status
+
+### Phase 1 — PWA Prototype
+
+The current version is a functional local prototype using deterministic simulated observations.
+
+It demonstrates the complete observation-to-visualization workflow without requiring an active AWS account.
+
+**Current mode: `SIMULATION MODE`**
+
+The simulated observations are clearly labelled and are **not presented as real sensor measurements**.
+
+---
+
+## 📱 Features
+
+### Progressive Web App
+
+- Responsive mobile-first interface
+- Installable PWA
+- Service worker
+- Offline application shell
+- Mobile and desktop support
+
+### Interactive Map
+
+- Leaflet-based geospatial map
+- OpenStreetMap basemap
+- Temperature observations
+- Thermal classification
+- Detected heat-pocket visualization
+- Interactive observation and heat-pocket details
+
+### Heat-Pocket Detection
+
+The current prototype uses a deterministic rule-based approach:
+
+- Recent observations are considered.
+- Nearby observations are grouped within approximately 200 meters.
+- A local baseline is calculated.
+- A cluster is considered a potential heat pocket when:
+  - at least 3 observations are available
+  - temperature difference is at least `+3.0°C`
+
+The prototype also provides a confidence level:
+
+- `HIGH`
+- `MEDIUM`
+- `LOW`
+
+Confidence represents the consistency, density, and recency of observations. It does **not** represent scientific certainty.
+
+---
+
+## 🧪 Simulation Mode
+
+The prototype currently uses deterministic simulated observations so that the demonstration produces a reproducible result.
+
+The simulation includes:
+
+- Normal observations
+- Elevated observations
+- Anomalous observations
+- A deliberately generated heat-pocket cluster
+
+This allows the detection pipeline to be tested consistently before connecting physical or external sensor data.
+
+---
+
+## 🏗️ Architecture
+
+### Current Phase
+
+```text
+Simulated Observations
+        │
+        ▼
+   PWA / Browser
+        │
+        ▼
+Heat-Pocket Detection
+        │
+        ▼
+ Interactive Map
