@@ -1,0 +1,98 @@
+
+"""Monte Carlo observation generator for HEPo.
+
+All output is synthetic simulation data, never real sensor readings.
+A fixed seed and fixed generated_at timestamp produce identical output.
+"""
+
+import random
+from datetime import datetime, timedelta, timezone
+
+
+ZONES = [
+    {
+        "tag": "normal",
+        "center": (28.7505, 77.1168),
+        "count": 8,
+        "temp": (34.0, 35.6),
+        "humidity": (48, 58),
+        "description": "Shaded campus and green space",
+    },
+    {
+        "tag": "elevated",
+        "center": (28.7422, 77.1222),
+        "count": 7,
+        "temp": (36.2, 37.8),
+        "humidity": (40, 48),
+        "description": "Paved residential corridor",
+    },
+    {
+        "tag": "pocket-1",
+        "center": (28.7552, 77.1242),
+        "count": 6,
+        "temp": (40.7, 42.1),
+        "humidity": (29, 35),
+        "description": "Synthetic unshaded transit hub",
+    },
+    {
+        "tag": "pocket-2",
+        "center": (28.7440, 77.1118),
+        "count": 5,
+        "temp": (40.2, 41.4),
+        "humidity": (32, 38),
+        "description": "Synthetic exposed industrial yard",
+    },
+]
+
+
+def generate_monte_carlo_observations(seed=None, generated_at=None):
+    """Generate 26 recent synthetic observations.
+
+    Pass the same seed and generated_at value to reproduce the exact dataset.
+    If generated_at is omitted, the current UTC time is used.
+    """
+    if seed is None:
+        seed = random.SystemRandom().randrange(1, 2**31)
+
+    seed = int(seed)
+    rng = random.Random(seed)
+
+    if generated_at is None:
+        generated_at = datetime.now(timezone.utc)
+
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=timezone.utc)
+
+    observations = []
+    counter = 1
+
+    for zone in ZONES:
+        center_lat, center_lon = zone["center"]
+
+        for _ in range(zone["count"]):
+            # Small geographic variation keeps each zone spatially clustered.
+            latitude = center_lat + rng.gauss(0, 0.00028)
+            longitude = center_lon + rng.gauss(0, 0.00032)
+
+            # Every reading is recent enough for the detector's time window.
+            observed_at = generated_at - timedelta(
+                seconds=rng.randint(0, 12 * 60)
+            )
+
+            observations.append({
+                "observationId": f"mc-{seed}-{counter:03d}",
+                "nodeId": f"mc-node-{counter:03d}",
+                "timestamp": observed_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "latitude": round(latitude, 6),
+                "longitude": round(longitude, 6),
+                "temperatureC": round(
+                    rng.uniform(*zone["temp"]), 1
+                ),
+                "humidityPercent": rng.randint(*zone["humidity"]),
+                "mode": "simulation",
+                "siteDescription": zone["description"],
+                "zoneTag": zone["tag"],
+            })
+            counter += 1
+
+    return observations

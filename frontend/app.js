@@ -514,11 +514,90 @@ function updateMetricsUI() {
   document.getElementById("stat-baseline-temp").textContent = `${state.urbanBaselineC}°C`;
 }
 
+async function refreshSimulation() {
+  const button = document.getElementById("btn-refresh-simulation");
+  const status = document.getElementById("simulation-status");
+
+  if (!button || button.disabled) return;
+
+  button.disabled = true;
+  if (status) status.textContent = "Generating fresh synthetic observations…";
+
+  try {
+    const response = await fetch("http://127.0.0.1:3000/simulate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Simulation API returned HTTP ${response.status}`);
+    }
+
+    const payload = await response.json();
+
+    if (
+      !Array.isArray(payload.observations) ||
+      payload.observations.length === 0 ||
+      !payload.observations.every((item) => item.mode === "simulation")
+    ) {
+      throw new Error("Simulation API returned invalid observation data");
+    }
+
+    state.observations = payload.observations;
+    state.selectedObservation = null;
+    state.selectedPocket = null;
+
+    const result = detectHeatPockets(state.observations);
+    state.heatPockets = result.pockets;
+    state.urbanBaselineC = result.baselineC;
+    state.averageTempC = result.averageC;
+
+    updateMetricsUI();
+    renderMapVisuals();
+    fitAllObservationsBounds();
+
+    if (status) {
+      status.textContent =
+        `Simulation mode · ${payload.count} synthetic observations · Local SAM API`;
+    }
+
+    console.info("[HEPo] Fresh Monte Carlo simulation loaded.");
+  } catch (error) {
+    console.error("[HEPo] Simulation refresh failed:", error);
+
+    state.observations = [...DETERMINISTIC_OBSERVATIONS];
+    state.selectedObservation = null;
+    state.selectedPocket = null;
+
+    const result = detectHeatPockets(state.observations);
+    state.heatPockets = result.pockets;
+    state.urbanBaselineC = result.baselineC;
+    state.averageTempC = result.averageC;
+
+    updateMetricsUI();
+    renderMapVisuals();
+    fitAllObservationsBounds();
+
+    if (status) {
+      status.textContent =
+        "Local API unavailable · Showing original demonstration data";
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
+
 // ============================================================================
 // 5. EVENT BINDINGS & LIFECYCLE
 // ============================================================================
 
 function setupEventListeners() {
+    const refreshButton = document.getElementById("btn-refresh-simulation");
+  if (refreshButton) {
+    refreshButton.addEventListener("click", refreshSimulation);
+  }
+
   // Detail Drawer Close
   document.getElementById("btn-close-drawer").addEventListener("click", closeDrawer);
 

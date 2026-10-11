@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# AWS SAM build output
+.aws-sam/
+
+# Local environment and secrets
+.env
+.venv/
+venv/
+
+# Editor and operating system
+.vscode/
+Thumbs.db
+Desktop.ini

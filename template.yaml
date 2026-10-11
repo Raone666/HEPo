@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "HEPo Heat Encroachment Pockets \u2014 SAM local development template.\
+  \ Exposes the Python heat-pocket detection engine as a serverless API. Intended\
+  \ for local testing only; no cloud resources are created unless explicitly deployed\
+  \ with `sam deploy`.\n"
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 15
+    MemorySize: 128
+    Environment:
+      Variables:
+        HEPO_MODE: local-sam
+  Api:
+    Cors:
+      AllowMethods: '''POST,OPTIONS'''
+      AllowHeaders: '''Content-Type'''
+      AllowOrigin: '''*'''
+
+Resources:
+  HEPoDetectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: HEPoDetect
+      Description: 'HEPo heat-pocket detection Lambda. Accepts POST /detect with a
+        JSON array of temperature observations and returns detected heat pockets using
+        the Haversine spatial-clustering algorithm.'
+      CodeUri: backend
+      Handler: lambda_handler.handler
+      Events:
+        DetectApi:
+          Type: Api
+          Properties:
+            Path: /detect
+            Method: post
+        SimulateApi:
+          Type: Api
+          Properties:
+            Path: /simulate
+            Method: post
+    Metadata:
+      SamResourceId: HEPoDetectFunction
+
+
+Outputs:
+  DetectApiUrl:
+    Description: Local API endpoint for heat-pocket detection.
+    Value: http://127.0.0.1:3000/detect
+  SimulateApiUrl:
+    Description: Local API endpoint for generating synthetic observations.
+    Value: http://127.0.0.1:3000/simulate
+  FunctionName:
+    Description: Lambda function logical name
+    Value:
+      Ref: HEPoDetectFunction

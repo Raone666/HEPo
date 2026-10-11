@@ -4,7 +4,7 @@
  * (Zero external dependencies / No Workbox required)
  */
 
-const CACHE_NAME = 'hepo-pwa-v2';
+const CACHE_NAME = 'hepo-pwa-v3';
 const TILE_CACHE_NAME = 'hepo-tile-cache-v1';
 
 const APP_SHELL_ASSETS = [

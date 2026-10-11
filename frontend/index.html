@@ -89,6 +89,11 @@
 
       <!-- Essential Map Controls (Floating Top-Right) -->
       <div class="map-controls">
+        <button id="btn-refresh-simulation" class="btn btn-control" title="Generate fresh synthetic observations" aria-label="Refresh synthetic observations">
+        <span aria-hidden="true">↻</span>
+         <span>Refresh Simulation</span>
+         </button>
+
         <button id="btn-focus-pocket" class="btn btn-control" title="Focus Detected Heat Pocket" aria-label="Focus Detected Heat Pocket">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <circle cx="12" cy="12" r="10"></circle>
@@ -111,6 +116,10 @@
           <span>Legend</span>
         </button>
       </div>
+<div id="simulation-status" role="status" aria-live="polite">
+  Simulation data · Initial demonstration dataset
+</div>
+
 
       <!-- Clear, Professional Map Legend (Bottom-Left) -->
       <aside id="map-legend" class="map-legend" aria-label="Thermal Classification Legend">
