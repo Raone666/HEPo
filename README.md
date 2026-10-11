@@ -1,246 +1,244 @@
 # HEPo 🌡️
-
 ### Heat Encroachment Pockets
 
-*Pronounced “hippo”.*
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Experimental-yellow?style=flat-square" alt="Experimental prototype" />
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.12" />
+  <img src="https://img.shields.io/badge/AWS-SAM%20Local-FF9900?style=flat-square&logo=amazonaws&logoColor=white" alt="AWS SAM Local" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
+</p>
 
-[![Project](https://img.shields.io/badge/Project-Environmental%20Hacks-orange)](https://github.com/Raone666/HEPo)
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
-[![AWS SAM](https://img.shields.io/badge/AWS-SAM%20Local-FF9900)](https://github.com/aws/serverless-application-model)
-[![Status](https://img.shields.io/badge/Status-Prototype-yellow)](https://github.com/Raone666/HEPo)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<p align="center">
+  <b>A little map. A local temperature difference. A potential heat pocket.</b>
+  <br />
+  Exploring localized urban heat patterns through simulated geospatial observations.
+</p>
 
-**Built for:** Environmental Hacks · Bharat Builds Tour  
-**Organized by:** WeMakeDevs × AWS Builder Center  
-**Track:** Heat and Water · Localized Urban Heat Pockets
+<p align="center">
+  <a href="https://github.com/Raone666/HEPo">Repository</a> ·
+  <a href="#getting-started">Run locally</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#credits--open-source">Credits</a>
+</p>
 
-HEPo is a Progressive Web App (PWA) exploring how geotagged temperature observations can help identify and visualize localized urban heat anomalies.
+---
 
-Instead of treating a city as a single temperature reading, HEPo examines differences between nearby locations, compares spatial clusters against a local baseline, and displays potential heat pockets on an interactive map.
+## `hepo --about`
 
-> [!IMPORTANT]
-> **HEPo currently uses synthetic simulation data.** It does not measure live environmental conditions or receive readings from physical sensors. Its visualizations demonstrate a prototype workflow, not verified real-world heat conditions.
+```text
+     _   _ _____ ____        _
+    | | | | ____|  _ \   ___| |
+    | |_| |  _| | |_) | / _ \ |
+    |  _  | |___|  __/ |  __/ |
+    |_| |_|_____|_|     \___|_|
 
-## Contents
+    HEAT ENCROACHMENT POCKETS
+    Pronounced: "hippo"
 
-- [Problem](#problem)
-- [Approach](#approach)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Technology and acknowledgements](#technology-and-acknowledgements)
-- [Getting started](#getting-started)
-- [API reference](#api-reference)
-- [Validation](#validation)
-- [Limitations](#limitations)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
+    PROJECT    :: Environmental Hacks
+    EVENT      :: Bharat Builds Tour
+    TRACK      :: Heat and Water
+    INTERFACE  :: Progressive Web App
+    COMPUTING  :: Python + AWS SAM Local
+    DATA       :: SYNTHETIC / SIMULATION
+    DEPLOYMENT :: LOCAL DEVELOPMENT
+```
 
-## Problem
+HEPo is an experimental Progressive Web App (PWA) exploring how geotagged temperature observations could help identify and visualize localized urban heat anomalies.
 
-Urban heat varies across a city. Locations separated by only a few hundred metres can experience different thermal conditions because of factors such as:
+A city-wide temperature reading cannot describe every street, shaded walkway, or concrete-heavy block. HEPo explores a different question:
 
-- Tree cover and shade availability
-- Roads, concrete, and other heat-retaining surfaces
-- Building density and urban geometry
-- Traffic and human activity
-- Vegetation and local airflow
+> Where might temperatures differ significantly between nearby locations?
 
-Regional weather reports provide useful context, but they may not capture every small-scale variation within an urban area.
+**Important:** The current prototype uses synthetic observations. It does not collect verified live temperatures from physical sensors, and its displayed heat pockets are demonstrations of a detection workflow, not evidence of actual environmental conditions.
 
-For outdoor workers, delivery couriers, pedestrians, event organizers, and urban planners, understanding these local differences could support better-informed decisions.
+Built for **Environmental Hacks · Bharat Builds Tour**, organized by **WeMakeDevs × AWS Builder Center**.
 
-HEPo explores the technical workflow behind identifying such differences from distributed observations.
+## `01 / the problem`
 
-## Approach
+Urban heat is not uniform. Nearby locations can experience different thermal conditions because of factors such as:
 
-The prototype combines synthetic observations, spatial clustering, local baseline comparison, and geospatial visualization.
+- Tree cover and shade.
+- Concrete, asphalt, and other heat-retaining surfaces.
+- Building density and street geometry.
+- Traffic and human activity.
+- Vegetation and local airflow.
 
-The intended processing pipeline is:
+Weather forecasts and regional measurements remain useful, but they may not represent every small-scale variation in an urban area.
 
-1. Generate or receive geotagged temperature observations.
-2. Validate observation fields and timestamps.
-3. Group geographically nearby observations.
-4. Estimate a local baseline from surrounding observations.
-5. Identify potential anomalies using configurable thresholds.
-6. Return detection results and visualize the data on a map.
+Outdoor workers, delivery couriers, pedestrians, event organizers, and urban planners could benefit from better localized environmental information.
 
-The prototype reports contextual information such as cluster temperature, baseline temperature, temperature difference, observation count, and a heuristic confidence classification.
+HEPo is a small prototype for exploring how such information might be organized and visualized.
 
-The current implementation demonstrates this pipeline with generated data. Real-world detection accuracy has not been scientifically validated.
+## `02 / the approach`
 
-## Features
+The current workflow combines synthetic observations, spatial grouping, baseline comparison, and map visualization.
 
-### 🗺️ Interactive map
+```text
+       SYNTHETIC OBSERVATIONS
+                 |
+                 v
+        VALIDATE THE INPUT
+                 |
+                 v
+        GROUP NEARBY POINTS
+                 |
+                 v
+       ESTIMATE LOCAL BASELINE
+                 |
+                 v
+        COMPARE TEMPERATURES
+                 |
+                 v
+       IDENTIFY POTENTIAL POCKETS
+                 |
+                 v
+         DISPLAY ON THE MAP
+```
 
-- Leaflet-based geospatial visualization
-- OpenStreetMap basemap
-- Geographically positioned synthetic observations
-- Heat-pocket visualization and contextual details
-- Browser-based interface for exploring simulated results
+The detection engine uses configurable rules to evaluate observations and return contextual information such as cluster temperature, baseline temperature, temperature difference, observation count, and a heuristic confidence classification.
 
-### 🧪 Synthetic observation generator
+These rules are experimental. Their scientific accuracy has not been established through field measurements.
 
-- Monte Carlo simulation of temperature observations
-- 26 observations across four demonstration zones
-- Temperature, humidity, timestamps, and geographic coordinates
-- Explicit simulation metadata
-- Refresh Simulation control for requesting a new dataset
+## `03 / features`
 
-The generated locations and readings are illustrative. They should not be interpreted as measurements from actual streets or sensors.
+### Interactive geospatial map
 
-### 🔎 Heat-pocket detection
+- Leaflet-based map interface.
+- OpenStreetMap basemap.
+- Geographically positioned demonstration observations.
+- Visual exploration of detected heat pockets.
+- Contextual information about the observations and detection results.
 
-The Python detection engine compares spatial clusters against a nearby baseline.
+### Synthetic data generator
 
-| Parameter | Configured value |
+- Monte Carlo-style simulation of temperature observations.
+- Demonstration dataset containing 26 observations across four zones.
+- Temperature, humidity, timestamp, and geographic coordinates.
+- Explicit simulation metadata.
+- A **Refresh Simulation** control to request another dataset.
+
+The simulated coordinates and temperatures must not be interpreted as verified real-world measurements.
+
+### Heat-pocket detection
+
+The current configured detection parameters are:
+
+| Parameter | Value |
 |---|---:|
 | Observation time window | 15 minutes |
 | Approximate clustering radius | 200 metres |
 | Minimum observations per cluster | 3 |
 | Minimum temperature anomaly | +3.0°C above baseline |
 
-These values are prototype configuration choices, not scientifically established safety thresholds.
+The detector uses spatial and temperature comparisons to identify potential anomalies. Its confidence labels are heuristic classifications, not statistically validated probabilities.
 
-### 📱 Progressive Web App
+### Progressive Web App
 
-- Responsive browser interface
-- Web app manifest
-- Service-worker support
-- Application-shell caching for supported offline use
-- Desktop and mobile browser access
+- Responsive browser interface.
+- Web app manifest.
+- Service-worker support.
+- Application-shell caching for supported offline use.
+- Desktop and mobile browser access.
 
-Local API requests and uncached external map tiles may require network connectivity.
+Local API requests and uncached external map tiles may require connectivity.
 
-### ☁️ Local AWS serverless workflow
+### Local serverless API
 
 The repository includes an AWS SAM template and a Python Lambda handler exposing two routes:
 
-- `POST /simulate` generates synthetic observations.
-- `POST /detect` accepts observations and returns detection results.
+| Route | Purpose |
+|---|---|
+| `POST /simulate` | Generate synthetic observations |
+| `POST /detect` | Process submitted observations and return detection results |
 
-AWS SAM CLI and Docker support local builds and testing. **The documented workflow does not imply that HEPo has been deployed to AWS.**
+The routes can be tested locally using AWS SAM CLI and Docker.
 
-## Architecture
+**Local SAM execution is not an AWS cloud deployment.** No public API, persistent cloud database, or production infrastructure is implied by this prototype.
+
+## `04 / architecture`
 
 ```text
-                   Browser
-                      |
-                      v
-                HEPo Frontend
-                      |
-             +--------+--------+
-             |                 |
-             v                 v
-      POST /simulate     Client-side logic
-             |                 |
-             v                 v
-       Monte Carlo       Map visualization
-        Generator
-             |
-             v
-     Synthetic observations
-
-
-       Local AWS SAM API
-             |
-       +-----+-----+
-       |           |
-       v           v
-   /simulate     /detect
-       |           |
-       v           v
-   Generator    Python detector
-                   |
-                   v
-            Detection results
+                         LOCAL MACHINE
+┌──────────────────────────────────────────────────────────┐
+│                                                          │
+│   Browser                                                │
+│      │                                                   │
+│      v                                                   │
+│   PWA / Leaflet Map                                      │
+│      │                                                   │
+│      │ HTTP                                              │
+│      v                                                   │
+│   AWS SAM Local API                                      │
+│      │                                                   │
+│      ├──────── POST /simulate ────────┐                  │
+│      │                                v                  │
+│      │                         Monte Carlo              │
+│      │                         Generator                 │
+│      │                                │                  │
+│      │                                v                  │
+│      │                         Simulated Data            │
+│      │                                                   │
+│      └──────── POST /detect ──────────┐                  │
+│                                       v                  │
+│                               Heat-Pocket Detector       │
+│                                       │                  │
+│                                       v                  │
+│                               Detection Results          │
+│                                                          │
+│   Docker provides the container environment for SAM.    │
+└──────────────────────────────────────────────────────────┘
 ```
 
-The frontend requests synthetic observations from the local simulation endpoint and updates its visualization. The backend detection endpoint separately supports server-side processing of submitted observations.
+The frontend also contains client-side detection logic. Therefore, the results shown on the map should not automatically be described as output from the server-side `/detect` endpoint.
 
-The frontend also contains client-side detection logic. Results displayed by the map should not automatically be assumed to have come from the backend `/detect` endpoint.
+The current workflow is intended for local development and testing.
 
-### Local execution versus cloud deployment
+## `05 / technology`
 
-The local development workflow uses AWS SAM CLI and Docker to build and run the serverless application on the developer's machine.
+| Technology | Role | Reference |
+|---|---|---|
+| Python | Simulation and detection logic | [Python](https://www.python.org/) |
+| Python standard library | Backend functionality without additional detector dependencies | [Python documentation](https://docs.python.org/3/) |
+| JavaScript | Browser-side application logic | [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript) |
+| HTML and CSS | Interface and presentation | [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web) |
+| Leaflet | Interactive maps | [Leaflet](https://leafletjs.com/) |
+| OpenStreetMap | Map data and basemap | [OpenStreetMap](https://www.openstreetmap.org/) |
+| PWA manifest and service worker | Installability and application-shell caching | [Web.dev](https://web.dev/learn/pwa/) |
+| AWS SAM CLI | Serverless build and local API testing | [AWS SAM](https://github.com/aws/aws-sam-cli) |
+| AWS Lambda interface | Handler execution model | [AWS Lambda](https://aws.amazon.com/lambda/) |
+| Docker | Containerized local build and execution | [Docker](https://www.docker.com/) |
+| Git | Version control | [Git](https://git-scm.com/) |
+| GitHub | Source hosting and collaboration | [GitHub](https://github.com/) |
 
-The current project does not claim to provide:
+## `06 / getting started`
 
-- A deployed public API
-- A persistent cloud database
-- Production monitoring
-- Verified live environmental measurements
+### Requirements
 
-Those capabilities would require additional implementation, configuration, testing, and deployment.
+Install or configure:
 
-## Technology and acknowledgements
-
-HEPo builds on existing software, open standards, and developer tools. This section distinguishes the open-source projects used by the prototype from managed services and development assistants.
-
-### Application and infrastructure
-
-| Technology | Purpose |
-|---|---|
-| [Python](https://www.python.org/) | Simulation and detection logic |
-| [Leaflet](https://leafletjs.com/) | Interactive maps |
-| [OpenStreetMap](https://www.openstreetmap.org/) | Geographic map data |
-| [AWS Serverless Application Model (SAM)](https://github.com/aws/serverless-application-model) | Serverless application definition and local development |
-| [AWS Lambda](https://aws.amazon.com/lambda/) | Serverless execution interface targeted by the handler |
-| [Docker](https://www.docker.com/) | Container tooling for local builds and execution |
-| [Git](https://git-scm.com/) | Version control |
-| [GitHub](https://github.com/) | Source hosting and collaboration |
-
-Open-source projects and services are not interchangeable categories. AWS Lambda is a managed cloud service, while Docker Desktop is a product built using a broader ecosystem of technologies. Their inclusion here acknowledges their role without implying that every component is open source.
-
-### AI-assisted development
-
-The implementation workflow also used command-line AI development tools:
-
-- [Google Antigravity](https://antigravity.google/) — AI-assisted development and coding workflow.
-- [AWS Kiro](https://kiro.dev/) — AI-assisted development, code exploration, and implementation support.
-
-These tools assisted development; they are not being presented as project sponsors or as substitutes for testing and verification. The project developer remains responsible for reviewing, integrating, and validating the resulting code.
-
-### Open-source acknowledgements
-
-Thanks to the maintainers and contributors of Python, Leaflet, OpenStreetMap, AWS SAM, and the wider open-source ecosystem that makes projects like HEPo possible.
-
-Please refer to each project's official licensing and attribution requirements. OpenStreetMap data attribution is particularly important when publishing map-based applications.
-
-## Getting started
-
-### Prerequisites
-
-Install or configure the following:
-
-- [Git](https://git-scm.com/downloads)
+- [Git](https://git-scm.com/)
 - [Python](https://www.python.org/downloads/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
 - A modern web browser
 
-The Lambda function is configured for Python 3.12. A container-based SAM build can provide the compatible build environment without requiring Python 3.12 to be your default Windows installation.
-
-The commands below use **PowerShell**.
+The Lambda runtime is configured for Python 3.12. Using Docker for the SAM build avoids depending on the host's default Python version.
 
 ### 1. Clone the repository
 
-```powershell
+```bat
 git clone https://github.com/Raone666/HEPo.git
-Set-Location HEPo
+cd HEPo
 ```
 
-If you already have the repository, navigate to its existing directory instead:
+If you already have the repository cloned, navigate to its directory instead.
 
-```powershell
-Set-Location "$HOME\Documents\GitHub\HEPo"
-```
+### 2. Start Docker Desktop
 
-### 2. Check the development tools
+Wait until the Docker engine is running, then check the installed tools:
 
-Start Docker Desktop and wait for its engine to become ready.
-
-```powershell
+```bat
 git --version
 python --version
 docker --version
@@ -251,78 +249,71 @@ sam --version
 
 Run these commands from the repository root:
 
-```powershell
+```bat
 sam validate --lint
 sam build --use-container
 ```
 
-The first command validates the SAM template. The second builds the application using a containerized environment compatible with the configured Lambda runtime.
+The first command validates the SAM template. The second builds the application in a compatible container environment.
 
 ### 4. Start the local API
 
-In the first PowerShell terminal:
+In the first Command Prompt window:
 
-```powershell
+```bat
 sam local start-api --host 127.0.0.1 --port 3000
 ```
 
-Leave this terminal running.
+Keep this window running.
 
 ### 5. Start the frontend
 
-Open a second PowerShell terminal and navigate to the repository root.
+Open a second Command Prompt window in the repository root:
 
-```powershell
-Set-Location "$HOME\Documents\GitHub\HEPo"
+```bat
 python -m http.server 8000 --directory frontend
 ```
 
-Leave this terminal running too.
+Keep this window running too.
 
 ### 6. Open HEPo
 
 Visit:
 
-<http://127.0.0.1:8000>
+**http://127.0.0.1:8000**
 
-Use **Refresh Simulation** to request a new synthetic dataset from the local API.
+Use **Refresh Simulation** to request a fresh synthetic dataset from the local API.
 
-To stop either server, press `Ctrl+C` in its terminal.
+To stop either process, press `Ctrl+C` in its terminal.
 
-> Both services bind to `127.0.0.1`, making them available locally on your own machine. This setup is intended for development, not public internet access.
+Both addresses use `127.0.0.1`, which refers to your own computer. They are local development endpoints, not public services.
 
-## API reference
-
-The endpoints below are available while the local SAM API is running.
+## `07 / API reference`
 
 ### `POST /simulate`
 
-Generates a synthetic observation dataset.
+Generates a new synthetic observation dataset.
 
-**PowerShell example:**
+Example request:
 
-```powershell
-$body = '{}' 
-
-Invoke-RestMethod `
-    -Uri 'http://127.0.0.1:3000/simulate' `
-    -Method Post `
-    -ContentType 'application/json' `
-    -Body $body
+```bat
+curl.exe -i -X POST http://127.0.0.1:3000/simulate -H "Content-Type: application/json" -d "{}"
 ```
 
-A successful response includes fields similar to:
+A successful response contains fields similar to:
 
 ```json
 {
-  "observations": [],
+  "observations": [
+    "... generated observation objects ..."
+  ],
   "count": 26,
   "source": "monte-carlo-simulation",
   "mode": "simulation"
 }
 ```
 
-The empty `observations` array above is illustrative. The actual response contains generated observations.
+The observation objects above are abbreviated for documentation. The actual endpoint returns generated data.
 
 ### `POST /detect`
 
@@ -346,28 +337,15 @@ Example request body:
 }
 ```
 
-This example illustrates the request structure. A single observation is not sufficient to satisfy the configured minimum cluster size.
+This example illustrates the request format. A single observation is not sufficient to satisfy the configured minimum cluster size.
 
-Save your actual test payload as `observations.json` in the repository root, then run:
+Save a complete request body as `observations.json`, then run the following command from the directory containing that file:
 
-```powershell
-Get-Content .\observations.json -Raw |
-    ConvertFrom-Json |
-    ConvertTo-Json -Depth 20 |
-    Set-Content .\observations-normalized.json
+```bat
+curl.exe -i -X POST http://127.0.0.1:3000/detect -H "Content-Type: application/json" --data-binary "@observations.json"
 ```
 
-Send the payload to the API:
-
-```powershell
-curl.exe -i `
-    -X POST `
-    'http://127.0.0.1:3000/detect' `
-    -H 'Content-Type: application/json' `
-    --data-binary '@observations.json'
-```
-
-The response includes detection results and associated counts and metadata.
+The response includes the detection results and associated counts and metadata.
 
 ### HTTP status codes
 
@@ -377,93 +355,127 @@ The response includes detection results and associated counts and metadata.
 | `400` | Missing, malformed, or invalid request data |
 | `500` | Unexpected server-side error |
 
-Exact validation behavior depends on the submitted data and the handler's implementation.
+These endpoints are available only while the local SAM API is running.
 
-## Validation
+## `08 / validation`
 
-Run the following commands from the repository root.
+Validate the SAM template:
 
-### Validate the SAM template
-
-```powershell
+```bat
 sam validate --lint
 ```
 
-### Check Python syntax
+Check Python syntax:
 
-```powershell
-python -m py_compile `
-    backend\lambda_handler.py `
-    backend\monte_carlo.py `
-    backend\heat_pocket_detector.py
+```bat
+python -m py_compile backend\lambda_handler.py backend\monte_carlo.py backend\heat_pocket_detector.py
 ```
 
-### Build the application
+Build the application:
 
-```powershell
+```bat
 sam build --use-container
 ```
 
-### Test the simulation endpoint
+Test the simulation route after starting the local API:
 
-With the local API running in another terminal:
-
-```powershell
-curl.exe -i `
-    -X POST `
-    'http://127.0.0.1:3000/simulate' `
-    -H 'Content-Type: application/json' `
-    -d '{}'
+```bat
+curl.exe -i -X POST http://127.0.0.1:3000/simulate -H "Content-Type: application/json" -d "{}"
 ```
 
-Check that the response reports simulation mode and includes generated observations.
+Basic validation confirms that selected commands run successfully. It does not establish comprehensive test coverage, scientific accuracy, or production readiness.
 
-These checks establish basic template, syntax, build, and endpoint behavior. They do not establish comprehensive test coverage, real-world detection accuracy, or scientific validity.
+## `09 / limitations`
 
-## Limitations
+HEPo is a prototype, with several important limitations:
 
-HEPo is an experimental prototype. Its limitations include:
+- **Synthetic data:** Current demonstration observations are generated by simulation, not collected from physical sensors.
+- **No verified live conditions:** The map does not establish current temperatures at the displayed coordinates.
+- **Experimental detection:** Clustering rules and confidence classifications have not been scientifically validated.
+- **No calibrated sensor network:** Future real-world inputs would require calibration, quality checks, and validation.
+- **No assumed cloud deployment:** Local AWS SAM testing does not mean the application has been deployed to AWS.
+- **Network dependencies:** Local API requests and uncached external map tiles may require connectivity.
 
-- **Synthetic data:** Current observations are generated by software rather than collected from physical sensors.
-- **Unverified environmental conditions:** Demonstration coordinates and temperatures are not a live environmental feed.
-- **Heuristic detection:** Clustering parameters and confidence classifications require validation against ground-truth measurements.
-- **Sensor calibration:** Future integration of phone-derived or physical sensor data would require quality control and calibration.
-- **No assumed cloud deployment:** The documented workflow is local. No deployed AWS service should be assumed.
-- **Network dependencies:** Local API requests and uncached map tiles may require connectivity.
-- **No certified heat-safety function:** HEPo is not a substitute for official heat alerts, environmental monitoring, or medical advice.
+HEPo is not a certified environmental monitoring platform or a substitute for official heat-risk guidance.
 
-## Roadmap
+## `10 / roadmap`
 
-Potential future work includes:
+Possible future improvements:
 
-- Integrating validated environmental datasets or calibrated sensors
-- Evaluating detection performance against reference measurements
-- Improving baseline estimation and spatial clustering
-- Comparing historical heat patterns
-- Improving accessibility and offline support
-- Evaluating secure cloud deployment and persistent storage
-- Gathering feedback from outdoor workers and urban planners
+- Integrate validated environmental datasets or calibrated sensor readings.
+- Evaluate detection performance against reference measurements.
+- Improve spatial clustering and local baseline estimation.
+- Add historical comparisons and trend visualization.
+- Improve offline functionality and accessibility.
+- Evaluate secure cloud deployment and persistent storage.
+- Gather feedback from potential users.
 
-These are possible extensions, not claims about features already implemented.
+These are future possibilities, not claims about existing functionality.
 
-## Contributing
+## `11 / credits & open source`
 
-Bug reports, reproducible issues, documentation improvements, and carefully tested contributions are welcome.
+HEPo builds on work from open-source communities and tools. Their work deserves recognition alongside the development tools used to build this prototype.
 
-When proposing changes:
+### Open-source foundations
 
-1. Describe the problem and expected behavior.
-2. Include steps to reproduce bugs where possible.
-3. Validate changes before submitting them.
-4. Preserve explicit simulation labeling unless real data sources have been implemented and verified.
-5. Avoid committing secrets, generated build artifacts, or local environment files.
+| Project | Contribution | Project reference |
+|---|---|---|
+| Python | Programming language and standard library | [Python](https://www.python.org/) |
+| Leaflet | Interactive mapping library | [Leaflet repository](https://github.com/Leaflet/Leaflet) |
+| OpenStreetMap | Community-maintained geographic data | [OpenStreetMap](https://www.openstreetmap.org/) |
+| AWS SAM CLI | Open-source tooling for serverless applications and local testing | [AWS SAM CLI repository](https://github.com/aws/aws-sam-cli) |
+| Git | Distributed version control | [Git project](https://git-scm.com/) |
 
-## License
+OpenStreetMap data is provided under the Open Database License (ODbL). Map usage and attribution must follow the applicable OpenStreetMap requirements. Other projects retain their own licenses and attribution requirements.
 
-HEPo is distributed under the MIT License. See [`LICENSE`](LICENSE) for the complete terms.
+The list above identifies major direct technologies. It is not a complete inventory of every transitive dependency. Consult the relevant project repositories and license files for the exact terms that apply.
 
-The license for HEPo does not replace the licenses, attribution obligations, or terms of service applicable to its dependencies and external data sources.
+### AI-assisted development tools
+
+- **[Google Antigravity](https://antigravity.google/)** — Antigravity CLI assisted the development workflow.
+- **[AWS Kiro](https://kiro.dev/)** — Kiro CLI assisted implementation and development tasks.
+
+These tools supported development. Their mention does not imply that they are open-source projects or that their providers sponsor or endorse HEPo.
+
+### Event acknowledgement
+
+Built for **Environmental Hacks · Bharat Builds Tour**, organized by **WeMakeDevs × AWS Builder Center**.
+
+### Design inspiration
+
+The terminal-inspired presentation takes inspiration from [Andrew Grant (@Andrew6rant)](https://github.com/Andrew6rant). The visual approach is adapted for HEPo rather than copied from the original implementation.
+
+Thank you to the maintainers, contributors, and communities who make these tools possible.
+
+## `12 / repository map`
+
+```text
+HEPo/
+├── backend/       # Simulation API and detection logic
+├── frontend/      # Browser interface and PWA assets
+├── simulation/    # Simulation-related project resources
+├── tests/         # Test-related project resources
+├── docs/          # Documentation
+├── template.yaml  # AWS SAM application template
+├── LICENSE        # Project license
+├── .gitignore
+└── README.md
+```
+
+This is a high-level directory map. Individual files and subdirectories may change as development continues.
+
+## `13 / license`
+
+HEPo is distributed under the MIT License. See [`LICENSE`](LICENSE) for the full license text.
+
+The project license applies to HEPo's own code; third-party software, data, and services remain subject to their respective terms.
 
 ---
 
-**HEPo — making localized urban heat patterns easier to explore, one simulated observation at a time.**
+<p align="center">
+  <b>HEPo</b>
+  <br />
+  Exploring the small differences that a city-wide average can hide.
+  <br />
+  <sub>One simulated observation at a time.</sub>
+</p>
